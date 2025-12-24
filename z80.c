@@ -51,6 +51,15 @@ typedef uint32_t uint32;
 #define SET_LOW_REGISTER(x, v)  x = (((x) & 0xff00) | ((v) & 0xff))
 #define SET_HIGH_REGISTER(x, v) x = (((x) & 0xff) | (((v) & 0xff) << 8))
 
+#ifdef DEBUG
+#define _putcon putchar
+#define _putch putchar
+#define _puts(arg) printf("%s", (arg))
+#define _puthex8(arg) printf("%02x", (arg))
+#define _puthex16(arg) printf("%04x", (arg))
+#define _getch getchar
+#endif
+
 #include "cpu.h"
 
 #include "z80.h"

@@ -1,4 +1,5 @@
 set(PROJECT_NAME Appli-Card)
+set(PICO_BOARD pico)
 
 cmake_minimum_required(VERSION 3.13...3.27)
 include(pico_sdk_import.cmake)
@@ -7,6 +8,7 @@ pico_sdk_init()
 
 add_executable(${PROJECT_NAME})
 pico_add_extra_outputs(${PROJECT_NAME})
+add_compile_definitions(NDEBUG)
 
 set_source_files_properties(incbin.S
         OBJECT_DEPENDS ${CMAKE_CURRENT_SOURCE_DIR}/applicard-v9.bin
