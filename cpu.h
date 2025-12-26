@@ -45,6 +45,7 @@ int32 HL1; /* alternate HL register                        */
 int32 IFF; /* Interrupt Flip Flop                          */
 int32 IR;  /* Interrupt (upper) / Refresh (lower) register */
 volatile int32 Status = 0; /* Status of the CPU 0=running 1=end request 2=back to CCP */
+volatile int32 NMI = 0; /* Non-maskable Interrupt 0=None 1=Asserted */
 int32 Debug = 0;
 int32 Break = -1;
 int32 Step = -1;
@@ -1213,6 +1214,7 @@ static inline void Z80reset(void) {
 	IFF = 0;
 	IR = 0;
 	Status = 0;
+	NMI = 0;
 	Debug = 0;
 	Break = -1;
 	Step = -1;
@@ -1514,6 +1516,14 @@ static inline void Z80run(void) {
 		if (Debug)
 			Z80debug();
 #endif
+                if (NMI) {	/* non-maskable interrupt */
+			NMI = 0;
+			IFF = 0; /* IFF = (IFF << 1) & 3 */
+			PUSH(PC);
+			PC = 0x66;
+			INCR(1);
+			break;
+		}
 
 		PCX = PC;
 		INCR(1); /* Add one M1 cycle to refresh counter */

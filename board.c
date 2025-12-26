@@ -65,6 +65,9 @@ void __time_critical_func(board)(void) {
                     case 0x5:
                         z80_reset();
                         break;
+                    case 0x7:
+                        z80_nmi();
+                        break;
                 }
             }
         } else {
@@ -77,6 +80,9 @@ void __time_critical_func(board)(void) {
                         break;
                     case 0x5:
                         z80_reset();
+                        break;
+                    case 0x7:
+                        z80_nmi();
                         break;
                 }
             }
