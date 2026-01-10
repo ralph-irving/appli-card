@@ -1516,12 +1516,18 @@ static inline void Z80run(void) {
 		if (Debug)
 			Z80debug();
 #endif
+		/* NOTE: If CPU emulation adds support for held in reset then
+		 * the NMI handler needs to exit halted state as first step.
+		 */
                 if (NMI) {	/* non-maskable interrupt */
-			NMI = 0;
 			IFF = 0; /* IFF = (IFF << 1) & 3 */
+			INCR(1);
+
 			PUSH(PC);
 			PC = 0x66;
-			INCR(1);
+
+			puts("NMI");
+			NMI = 0;
 			break;
 		}
 
