@@ -10,6 +10,14 @@ add_executable(${PROJECT_NAME})
 pico_add_extra_outputs(${PROJECT_NAME})
 add_compile_definitions(NDEBUG)
 
+option(DEBUG "Debug output via USB CDC-ACM")
+message("DEBUG is ${DEBUG}")
+
+pico_enable_stdio_uart(${PROJECT_NAME} 0)
+if (DEBUG)
+        pico_enable_stdio_usb(${PROJECT_NAME} 1)
+endif ()
+
 set_source_files_properties(incbin.S
         OBJECT_DEPENDS ${CMAKE_CURRENT_SOURCE_DIR}/applicard-v9.bin
         )
@@ -20,6 +28,10 @@ FetchContent_Declare(a2pico
         GIT_TAG main
         )
 FetchContent_MakeAvailable(a2pico)
+
+if (DEBUG)
+        target_compile_definitions(${PROJECT_NAME} PRIVATE DEBUG)
+endif ()
 
 target_sources(${PROJECT_NAME} PRIVATE
         board.c
