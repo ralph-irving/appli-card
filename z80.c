@@ -60,7 +60,7 @@ typedef uint32_t uint32;
 #define _getch         getchar
 #define _putcon        putchar
 #define _putch         putchar
-#define _puts          printf
+#define _puts(arg)     printf("%s", (arg))
 #define _puthex8(arg)  printf("%02x", (arg))
 #define _puthex16(arg) printf("%04x", (arg))
 
@@ -94,7 +94,7 @@ static void _RamWrite(uint32_t addr, uint32_t value) {
 }
 
 static uint32_t _HardwareIn(uint32_t port) {
-    uint32_t value = 0x00;
+    uint32_t value = 0xFF;
     switch (port) {
         case 0x20:
             value = z80_rd_value;
