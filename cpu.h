@@ -1275,44 +1275,44 @@ void memdump(uint16 pos) {
 }
 
 void memoryset(uint16 pos) {
-	uint16 h = pos;
+	uint16 addr = pos;
 	uint8 loop = TRUE;
-	uint8 byte[2];
-	uint8 ch, i, j;
+	uint8 hexch, val, i, j;
 
 	do {
-	_puthex16(h);
-	_puts(" : ");
-	_puthex8(_RamRead(h));
-	_putcon(' ');
+		_puthex16(addr);
+		_puts(" : ");
+		_puthex8(_RamRead(addr));
+		_putcon(' ');
 
-	ch = 0;
-	for (i = 0; i < 2; ++i) {
-		byte[i] = _getch();
-		if ( ! isxdigit(byte[i]) ) {
-			loop = FALSE;
-			break;
+		val = 0;
+		for (i = 0; i < 2; ++i) {
+			hexch = _getch();
+			if ( ! isxdigit(hexch) ) {
+				loop = FALSE;
+				break;
+			}
+
+			_putch(hexch);
+
+			j = hexch - 48;
+			if ( j > 9 )
+				j -= 7;
+			j &= 0x0f;
+			val = (val <<4) | j;
 		}
 
-		_putch(byte[i]);
+		if (loop) {
 
-		j = byte[i] - 48;
-		if ( j > 9 )
-			j -= 7;
-		j &= 0x0f;
-		ch = (ch <<4) | j;
-	}
+			_RamWrite(addr, val);
 
-	if (loop) {
+			/* Might be ROM, read back before display */
+			val = _RamRead(addr++);
 
-		_RamWrite(h, ch);
-
-                ch = _RamRead(h++);
-
-		_putcon(' ');
-		_puthex8(ch);
-		_puts("\r\n");
-	}
+			_putcon(' ');
+			_puthex8(val);
+			_puts("\r\n");
+		}
 	} while (loop);
 }
 
