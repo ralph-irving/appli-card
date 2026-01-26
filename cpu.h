@@ -1316,6 +1316,29 @@ void memoryset(uint16 pos) {
 	} while (loop);
 }
 
+uint8 getaddress (unsigned int* addr) {
+	uint8 valid = TRUE;
+	uint8 hexch, i, j;
+
+	for (i = 0; i < 4; ++i) {
+		hexch = _getch();
+		if ( ! isxdigit(hexch) ) {
+			valid = FALSE;
+			break;
+		}
+
+		_putch(hexch);
+
+		j = hexch - 48;
+		if ( j > 9 )
+			j -= 7;
+		j &= 0x0f;
+		*addr = (*addr <<4) | j;
+	}
+
+	return valid;
+}
+
 uint8 Disasm(uint16 pos) {
 	const char* txt;
 	char jr;
@@ -1464,7 +1487,7 @@ void Z80debug(void) {
 			break;
 		case 'B':
 			_puts(" Addr: ");
-			res=scanf("%04x", &bpoint);
+			res=getaddress(&bpoint);
 			_puts("\r\n");
 			if (res) {
 				Break = bpoint;
@@ -1479,14 +1502,14 @@ void Z80debug(void) {
 			break;
 		case 'D':
 			_puts(" Addr: ");
-			res=scanf("%04x", &bpoint);
+			res=getaddress(&bpoint);
 			_puts("\r\n");
 			if(res)
 				memdump(bpoint);
 			break;
 		case 'L':
 			_puts(" Addr: ");
-			res=scanf("%04x", &bpoint);
+			res=getaddress(&bpoint);
 			_puts("\r\n");
 			if (res) {
 				I = 16;
@@ -1502,7 +1525,7 @@ void Z80debug(void) {
 			break;
 		case 'S':
 			_puts(" Addr: ");
-			res=scanf("%04x", &bpoint);
+			res=getaddress(&bpoint);
 			_puts("\r\n");
 			if(res)
 				memoryset(bpoint);
@@ -1510,12 +1533,12 @@ void Z80debug(void) {
 		case 'T':
 			loop = FALSE;
 			Step = pos + 3; // This only works correctly with CALL
-							// If the called function messes with the stack, this will fail as well.
+					// If the called function messes with the stack, this will fail as well.
 			Debug = 0;
 			break;
 		case 'W':
 			_puts(" Addr: ");
-			res=scanf("%04x", &bpoint);
+			res=getaddress(&bpoint);
 			_puts("\r\n");
 			if (res) {
 				Watch = bpoint;
