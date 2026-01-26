@@ -29,6 +29,7 @@ SOFTWARE.
 
 #ifdef DEBUG
 #include <stdbool.h>
+#include <ctype.h>
 #ifndef TRUE
 #define TRUE	true
 #endif
@@ -1273,6 +1274,48 @@ void memdump(uint16 pos) {
 	}
 }
 
+void memoryset(uint16 pos) {
+	uint16 h = pos;
+	uint8 loop = TRUE;
+	uint8 byte[2];
+	uint8 ch, i, j;
+
+	do {
+	_puthex16(h);
+	_puts(" : ");
+	_puthex8(_RamRead(h));
+	_putcon(' ');
+
+	ch = 0;
+	for (i = 0; i < 2; ++i) {
+		byte[i] = _getch();
+		if ( ! isxdigit(byte[i]) ) {
+			loop = FALSE;
+			break;
+		}
+
+		_putch(byte[i]);
+
+		j = byte[i] - 48;
+		if ( j > 9 )
+			j -= 7;
+		j &= 0x0f;
+		ch = (ch <<4) | j;
+	}
+
+	if (loop) {
+
+		_RamWrite(h, ch);
+
+                ch = _RamRead(h++);
+
+		_putcon(' ');
+		_puthex8(ch);
+		_puts("\r\n");
+	}
+	} while (loop);
+}
+
 uint8 Disasm(uint16 pos) {
 	const char* txt;
 	char jr;
@@ -1457,6 +1500,13 @@ void Z80debug(void) {
 				}
 			}
 			break;
+		case 'S':
+			_puts(" Addr: ");
+			res=scanf("%04x", &bpoint);
+			_puts("\r\n");
+			if(res)
+				memoryset(bpoint);
+			break;
 		case 'T':
 			loop = FALSE;
 			Step = pos + 3; // This only works correctly with CALL
@@ -1492,6 +1542,7 @@ void Z80debug(void) {
 			_puts("  C - Clears breakpoint\r\n");
 			_puts("  D - Dumps memory at address\r\n");
 			_puts("  L - Disassembles at address\r\n");
+			_puts("  S - Set memory at address\r\n");
 			_puts("  T - Steps over a call\r\n");
 			_puts("  W - Sets a byte/word watch\r\n");
 			break;
