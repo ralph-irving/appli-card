@@ -1507,6 +1507,19 @@ void Z80debug(void) {
 			if(res)
 				memdump(bpoint);
 			break;
+		case 'G':
+			_puts(" Addr: ");
+			res=getaddress(&bpoint);
+			_puts("\r\n");
+			if(res) {
+				PC = bpoint;
+				loop = FALSE;
+				Debug = 0;
+				_puts("Continuing execution at address ");
+				_puthex16(bpoint);
+				_puts("\r\n");
+			}
+			break;
 		case 'L':
 			_puts(" Addr: ");
 			res=getaddress(&bpoint);
@@ -1564,6 +1577,7 @@ void Z80debug(void) {
 			_puts("  B - Sets breakpoint at address\r\n");
 			_puts("  C - Clears breakpoint\r\n");
 			_puts("  D - Dumps memory at address\r\n");
+			_puts("  G - Continue execution at address\r\n");
 			_puts("  L - Disassembles at address\r\n");
 			_puts("  S - Set memory at address\r\n");
 			_puts("  T - Steps over a call\r\n");
