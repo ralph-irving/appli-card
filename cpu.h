@@ -1473,6 +1473,8 @@ void Z80debug(void) {
 			_puts("\r\n"); memdump(IX & 0xFF00); break;
 		case 'y':
 			_puts("\r\n"); memdump(IY & 0xFF00); break;
+		case 'a':
+			_puts("\r\n"); memdump(dmaAddr); break;
 		case 'l':
 			_puts("\r\n");
 			I = 16;
@@ -1572,6 +1574,7 @@ void Z80debug(void) {
 			_puts("  s - Dumps the page (SP) points to\r\n");
 			_puts("  x - Dumps the page (IX) points to\r\n");
 			_puts("  y - Dumps the page (IY) points to\r\n");
+			_puts("  a - Dumps memory pointed by dmaAddr\r\n");
 			_puts("  l - Disassembles from current PC\r\n");
 			_puts("Uppercase commands:\r\n");
 			_puts("  B - Sets breakpoint at address\r\n");
